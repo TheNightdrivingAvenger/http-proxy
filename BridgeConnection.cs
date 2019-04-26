@@ -55,6 +55,8 @@ namespace lab4
         {
             bool gotHead = false, error = false;
             bool shutted = false;
+            requestBufEnd = 0;
+
             int readRes;
             while (!gotHead)
             {
@@ -84,7 +86,7 @@ namespace lab4
                 {
                     try
                     {
-                        ParseHead(ref requestHead, requestBuf);
+                        ParseHead(ref requestHead, requestBuf, requestBufEnd);
                         if (requestHead != null)
                         {
                             gotHead = true;
@@ -161,6 +163,7 @@ namespace lab4
         private void ToServerConnection()
         {
             bool shutted = false, gotHead = false, error = false;
+            responseBufEnd = 0;
 
             int readRes;
             while (!gotHead)
@@ -197,9 +200,10 @@ namespace lab4
                 }
                 else
                 {
+                    //break;
                     try
                     {
-                        ParseHead(ref responseHead, responseBuf);
+                        ParseHead(ref responseHead, responseBuf, responseBufEnd);
                         if (responseHead != null)
                         {
                             gotHead = true;
@@ -253,10 +257,10 @@ namespace lab4
             }
         }
 
-        private void ParseHead(ref HTTPHead head, byte[] buf)
+        private void ParseHead(ref HTTPHead head, byte[] buf, int bufEnd)
         {
             bool gotHead = false;
-            while (!gotHead && (lexerPos + 3 < requestBufEnd))
+            while (!gotHead && (lexerPos + 3 < bufEnd))
             {
                 if (!((char)buf[lexerPos] == '\r' && (char)buf[lexerPos + 1] == '\n' &&
                     (char)buf[lexerPos + 2] == '\r' && (char)buf[lexerPos + 3] == '\n'))
